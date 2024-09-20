@@ -47,7 +47,7 @@ const getAllTours = async (req, res) => {
   // });
 
   try {
-    // console.log(req.query);
+    console.log(req.query);
     // const queryObj = { ...req.query };
     // console.log('req.query', queryObj);
     // const excludedFields = ['page', 'sort', 'limit', 'fields'];
@@ -116,8 +116,11 @@ const getAllTours = async (req, res) => {
 
 const getTour = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const tour = await Tour.findById(id);
+    // const { id } = req.params;
+    const tour = await Tour.findById(req.params.id).populate({
+      path: 'guides',
+      select: '-__v -passwordChangedAt',
+    });
 
     return res.status(200).json({
       status: 'success',

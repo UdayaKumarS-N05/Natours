@@ -5,3 +5,4 @@
 .prettierrc
 .vscode
 dev-data
+.gitignore

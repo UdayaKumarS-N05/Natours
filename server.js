@@ -6,7 +6,7 @@ const DB = dotenv.parsed.DATABASE.replace(
   '<PASSWORD>',
   dotenv.parsed.DATABASE_PASSWORD,
 );
-
+console.log('DB', DB);
 mongoose
   .connect(DB, {
     useNewUrlParser: true,

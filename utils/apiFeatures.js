@@ -12,8 +12,9 @@ class APIFeatures {
     // Advanced filtering
     // to filter out comparison operators and modify them to make them look like mongo queries i.e. $gt
     let queryStr = JSON.stringify(queryObj);
+    console.log(queryStr);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
-
+    console.log(queryStr);
     this.query = this.query.find(JSON.parse(queryStr));
     return this;
   }
