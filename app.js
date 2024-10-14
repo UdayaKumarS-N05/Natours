@@ -4,6 +4,7 @@ const globalErrorHandler = require('./controllers/errorControllers');
 const AppError = require('./utils/appError');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const reviewsRouter = require('./routes/reviewRoutes');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSantize = require('express-mongo-sanitize');
@@ -51,6 +52,7 @@ app.use(
 // Using the routers as middleware.
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewsRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalUrl} on this server!`, 404));

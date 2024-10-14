@@ -3,60 +3,66 @@ const validator = require('validator');
 const argon = require('argon2');
 const crypto = require('crypto');
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please tell us your name.'],
-  },
-  email: {
-    type: String,
-    required: [true, 'Please tell us your email address.'],
-    unique: true,
-    lowercase: true,
-    validate: {
-      validator: validator.isEmail,
-      message: 'Please provide a valid email.',
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Please tell us your name.'],
     },
-  },
-  photo: {
-    type: String,
-  },
-  role: {
-    type: String,
-    enum: {
-      values: ['admin', 'user', 'guide', 'lead-guide'],
-      message:
-        "Only 'admin', 'user', 'guide', 'lead-guide' are the only users possible",
-    },
-    default: 'user',
-  },
-  password: {
-    type: String,
-    // validator: [validator.isStrongPassword, 'Password not strong enough'],
-    minlength: 8,
-    required: [true, 'Please enter your password.'],
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    validate: {
-      validator: function (el) {
-        return el === this.password;
+    email: {
+      type: String,
+      required: [true, 'Please tell us your email address.'],
+      unique: true,
+      lowercase: true,
+      validate: {
+        validator: validator.isEmail,
+        message: 'Please provide a valid email.',
       },
-      message: 'Passwords do not match',
+    },
+    photo: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: {
+        values: ['admin', 'user', 'guide', 'lead-guide'],
+        message:
+          "Only 'admin', 'user', 'guide', 'lead-guide' are the only users possible",
+      },
+      default: 'user',
+    },
+    password: {
+      type: String,
+      // validator: [validator.isStrongPassword, 'Password not strong enough'],
+      minlength: 8,
+      required: [true, 'Please enter your password.'],
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      validate: {
+        validator: function (el) {
+          return el === this.password;
+        },
+        message: 'Passwords do not match',
+      },
+    },
+    passwordChangedAt: {
+      type: Date,
+    },
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
     },
   },
-  passwordChangedAt: {
-    type: Date,
-  },
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
-});
+  // {
+  //   toJSON: { virtuals: true },
+  //   toObject: { virtuals: true },
+  // },
+);
 
 userSchema.methods.checkPasswordsIsSame = async function (
   candidatePassword,

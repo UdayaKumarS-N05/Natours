@@ -117,10 +117,14 @@ const getAllTours = async (req, res) => {
 const getTour = async (req, res, next) => {
   try {
     // const { id } = req.params;
-    const tour = await Tour.findById(req.params.id).populate({
-      path: 'guides',
-      select: '-__v -passwordChangedAt',
-    });
+    const tour = await Tour.findById(req.params.id)
+      .populate({
+        path: 'guides',
+        select: '-__v -passwordChangedAt',
+      })
+      .populate({
+        path: 'reviews',
+      });
 
     return res.status(200).json({
       status: 'success',
@@ -173,13 +177,7 @@ const updateTour = async (req, res, next) => {
       },
     });
   } catch (err) {
-    return next(
-      new AppError(
-        'This is a customised error message for update Tour',
-        404,
-        err,
-      ),
-    );
+    return next(new AppError('Error updating the tour.', 404, err));
   }
 };
 

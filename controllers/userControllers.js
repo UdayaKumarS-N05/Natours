@@ -1,5 +1,8 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
+const { protect, restrictTo } = require('./authController');
+const factory = require('./handlerFactory');
+
 // const jwt = require('jsonwebtoken');
 
 const filterObj = (obj, ...args) => {
@@ -75,38 +78,23 @@ const deleteMe = async (req, res, next) => {
   }
 };
 
-const getUser = (req, res) => {
-  return res.status(500).json({
-    status: 'error',
-    message: 'This route is still not created',
-  });
-};
+// const getUser = (req, res) => {
+//   return res.status(500).json({
+//     status: 'error',
+//     message: 'This route is still not created',
+//   });
+// };
 
-const createUser = (req, res) => {
-  return res.status(500).json({
-    status: 'error',
-    message: 'This route is still not created',
-  });
-};
+// const createUser = factory.createOne(User);
 
-const updateUser = (req, res) => {
-  return res.status(500).json({
-    status: 'error',
-    message: 'This route is still not created',
-  });
-};
-const deleteUser = (req, res) => {
-  return res.status(500).json({
-    status: 'error',
-    message: 'This route is still not created',
-  });
-};
+const updateUser = factory.updateOne(User);
+const deleteUser = factory.deleteOne(User);
 
 module.exports = {
   getAllUsers,
-  getUser,
+  // getUser,
   updateUser,
-  createUser,
+  // createUser,
   deleteUser,
   updateMe,
   deleteMe,

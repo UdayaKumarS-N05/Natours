@@ -2,9 +2,7 @@ const express = require('express');
 
 const {
   getAllUsers,
-  getUser,
   updateUser,
-  createUser,
   deleteUser,
   updateMe,
   deleteMe,
@@ -20,7 +18,7 @@ const {
 
 const router = express.Router();
 
-router.route('/').get(getAllUsers).post(createUser);
+router.route('/').get(getAllUsers);
 
 router.route('/signup').post(signup);
 router.route('/login').post(login);
@@ -30,6 +28,6 @@ router.route('/update_password').patch(protect, updatePassword);
 router.route('/update_profile').patch(protect, updateMe);
 router.route('/delete_me').delete(protect, deleteMe);
 
-router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+router.route('/:id').patch(updateUser).delete(deleteUser);
 
 module.exports = router;
