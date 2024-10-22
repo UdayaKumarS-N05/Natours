@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const User = require('./userModel');
+// const User = require('./userModel');
 
 const toursScheme = new mongoose.Schema(
   {
@@ -27,7 +27,7 @@ const toursScheme = new mongoose.Schema(
         message: `Difficulty should be either 'easy','medium' or 'difficult'`,
       },
     },
-    ratingQuantity: {
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
@@ -36,6 +36,7 @@ const toursScheme = new mongoose.Schema(
       default: 4.5,
       min: [1, 'Rating must be above 1'],
       max: [5, 'Rating must be below 5'],
+      set: (val) => Math.floor(val),
     },
     price: {
       type: Number,
@@ -138,6 +139,7 @@ toursScheme.pre('save', function (next) {
 // Indexing to improve performance.
 toursScheme.index({ price: 1, ratingsAvg: -1 });
 toursScheme.index({ slug: 1 });
+toursScheme.index({ startLocation: '2dsphere' });
 
 // Virtual populate
 toursScheme.virtual('reviews', {

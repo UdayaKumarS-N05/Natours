@@ -298,8 +298,89 @@ const getMonthlyPlan = async (req, res) => {
   }
 };
 
+const getToursWithin = async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  if (!distance) return next(new AppError('Please provide the distance'), 401);
+  if (!lat || !lng)
+    return next(
+      new AppError('Please provide the co-ordinates in lat,lng format'),
+      401,
+    );
+  if (!unit)
+    return next(
+      new AppError(
+        'Please provide the unit of measurement. "mi" for miles and "km" for kilometers.',
+      ),
+      401,
+    );
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+
+  try {
+    const tours = await Tour.find({
+      startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+    });
+
+    res.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        data: tours,
+      },
+    });
+  } catch (err) {
+    return next(new AppError(err.message, 404, err));
+  }
+};
+
+const getDistances = async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  if (!lat || !lng)
+    return next(
+      new AppError('Please provide the co-ordinates in lat,lng format'),
+      401,
+    );
+  if (!unit)
+    return next(
+      new AppError(
+        'Please provide the unit of measurement. "mi" for miles and "km" for kilometers.',
+      ),
+      401,
+    );
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+  try {
+    const distances = await Tour.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: 'Point',
+            coordinates: [lng * 1, lat * 1],
+          },
+          distanceField: 'distance',
+          distanceMultiplier: multiplier,
+        },
+      },
+      {
+        $project: {
+          distance: 1,
+          name: 1,
+        },
+      },
+    ]);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        data: distances,
+      },
+    });
+  } catch (err) {
+    return next(new AppError(err.message, 404, err));
+  }
+};
 module.exports = {
   getTopFiveCheapest,
+  getDistances,
   getAllTours,
   getTour,
   createTour,
@@ -308,4 +389,5 @@ module.exports = {
   getTop3BestRated,
   getTourStats,
   getMonthlyPlan,
+  getToursWithin,
 };
